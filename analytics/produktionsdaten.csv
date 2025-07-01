@@ -1,0 +1,5 @@
+Zeitstempel,Maschine,Produkt,Stückzahl,Ausschuss
+2024-06-01 08:00:00,M1,Bananen,100,2
+2024-06-01 08:00:00,M2,Äpfel,120,1
+2024-06-01 09:00:00,M1,Bananen,110,3
+2024-06-01 09:00:00,M2,Äpfel,130,0

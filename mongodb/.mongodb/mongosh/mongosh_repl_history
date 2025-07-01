@@ -1,0 +1,8 @@
+show collections
+db.createCollection("bestellscheine");
+db.creatCollection("bestellscheine");
+show dbs;
+use dma_bananen; 
+mongo -- host localost --port 27017
+mongo --host localost --port 27017
+show dbs;
