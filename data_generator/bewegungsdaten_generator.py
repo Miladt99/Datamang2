@@ -1,14 +1,15 @@
 import psycopg2
+import os
 import random
 from datetime import datetime, timedelta
 
 def get_db_connection():
     return psycopg2.connect(
-        host="localhost",
-        port="5432",
-        database="supplychain",
-        user="postgres",
-        password="password"
+        host=os.getenv("POSTGRES_HOST", "localhost"),
+        port=os.getenv("POSTGRES_PORT", "5432"),
+        database=os.getenv("POSTGRES_DB", "supplychain"),
+        user=os.getenv("POSTGRES_USER", "postgres"),
+        password=os.getenv("POSTGRES_PASSWORD", "password"),
     )
 
 def get_ids(cur, table, id_col):

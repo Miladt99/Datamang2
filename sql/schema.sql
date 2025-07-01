@@ -152,3 +152,18 @@ CREATE TABLE transportauftrag (
     ankunftszeit TIMESTAMP,
     transportmittel VARCHAR(50)
 );
+
+-- 3.1 Bestellschein
+CREATE TABLE bestellschein (
+    bestellscheinId SERIAL PRIMARY KEY,
+    partnerId INT REFERENCES partnerunternehmen(partnerId),
+    bestellscheinDatum DATE
+);
+
+-- 4 Metadaten zur Dokumentation von Datenherkünften
+CREATE TABLE metadata (
+    id SERIAL PRIMARY KEY,
+    table_name VARCHAR(255),
+    created_at TIMESTAMP,
+    source TEXT
+);

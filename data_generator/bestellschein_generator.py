@@ -44,7 +44,7 @@ def generate_bestellschein(nr):
     return bestellschein
 
 def main():
-    anzahl = 10
+    anzahl = 1000
     print(f"Generiere {anzahl} Bestellscheine in MongoDB...")
     for i in range(anzahl):
         bestellschein = generate_bestellschein(i)

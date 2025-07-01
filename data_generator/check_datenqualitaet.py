@@ -1,12 +1,13 @@
 import psycopg2
 import pandas as pd
+import os
 
 conn = psycopg2.connect(
-    host="localhost",
-    port="5432",
-    database="supplychain",
-    user="postgres",
-    password="password"
+    host=os.getenv("POSTGRES_HOST", "localhost"),
+    port=os.getenv("POSTGRES_PORT", "5432"),
+    database=os.getenv("POSTGRES_DB", "supplychain"),
+    user=os.getenv("POSTGRES_USER", "postgres"),
+    password=os.getenv("POSTGRES_PASSWORD", "password"),
 )
 
 # Partnerunternehmen prüfen

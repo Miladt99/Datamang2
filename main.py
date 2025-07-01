@@ -27,4 +27,4 @@ def main():
     print("✅ Komplettlauf abgeschlossen.")
 
 if __name__ == "__main__":
-    insert_data()
+    main()

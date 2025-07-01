@@ -3,6 +3,13 @@ from pymongo import MongoClient
 import random
 from datetime import datetime, timedelta
 
+
+def log_metadata(cursor, table_name, source):
+    cursor.execute(
+        "INSERT INTO metadata (table_name, created_at, source) VALUES (?, ?, ?)",
+        (table_name, datetime.now(), source),
+    )
+
 def insert_data():
     conn = sqlite3.connect("dma_bananen.db")
     cursor = conn.cursor()
@@ -29,6 +36,10 @@ def insert_data():
         menge = round(random.uniform(500, 1000), 2)
         cursor.execute("INSERT INTO ernte (plantageId, produktId, erntedatum, mengekg) VALUES (?, ?, ?, ?)",
                        (plantage_id, produkt_id, datum.date(), menge))
+    log_metadata(cursor, "partnerunternehmen", "generate_data.insert_data")
+    log_metadata(cursor, "produkt", "generate_data.insert_data")
+    log_metadata(cursor, "plantage", "generate_data.insert_data")
+    log_metadata(cursor, "ernte", "generate_data.insert_data")
     conn.commit()
     conn.close()
 
@@ -59,6 +70,9 @@ def insert_qc_data():
         # Freigabe
         cursor.execute("INSERT INTO qcfreigabe (probeId, freigabedatum, status) VALUES (?, ?, ?)",
                        (probe_id, probenahmedatum + timedelta(days=1), freigabe))
+    log_metadata(cursor, "qcstelle", "generate_data.insert_qc_data")
+    log_metadata(cursor, "qcprobe", "generate_data.insert_qc_data")
+    log_metadata(cursor, "qcfreigabe", "generate_data.insert_qc_data")
     conn.commit()
     conn.close()
 
@@ -104,6 +118,10 @@ def insert_hafen_data():
             (hafenId, produktId, menge))
 
         conn.commit()
+    log_metadata(cursor, "hafenlager", "generate_data.insert_hafen_data")
+    log_metadata(cursor, "hafenwareneingang", "generate_data.insert_hafen_data")
+    log_metadata(cursor, "hafenbestand", "generate_data.insert_hafen_data")
+    conn.commit()
     conn.close()
 
 
@@ -140,6 +158,9 @@ def insert_dc_data():
             INSERT INTO dcbestand (dcId, produktId, mengekg)
             VALUES (?, ?, ?)
         """, (dcId, produktId, menge))
+    log_metadata(cursor, "dcstandort", "generate_data.insert_dc_data")
+    log_metadata(cursor, "dcwareneingang", "generate_data.insert_dc_data")
+    log_metadata(cursor, "dcbestand", "generate_data.insert_dc_data")
     conn.commit()
     conn.close()
 
@@ -176,7 +197,6 @@ def insert_pos_data():
             INSERT INTO posbestand (posId, produktId, mengekg)
             VALUES (?, ?, ?)
         """, (posId, produktId, menge))
-
     # Verkaufsdaten (10 Verkäufe simulieren)
     cursor.execute("SELECT posbestandId, mengekg FROM posbestand")
     alle_bestaende = cursor.fetchall()
@@ -198,6 +218,10 @@ def insert_pos_data():
         cursor.execute("UPDATE posbestand SET mengekg = ? WHERE posbestandId = ?",
                        (bestand - verkauft_total, posbestandId))
 
+    log_metadata(cursor, "posstandort", "generate_data.insert_pos_data")
+    log_metadata(cursor, "poswareneingang", "generate_data.insert_pos_data")
+    log_metadata(cursor, "posbestand", "generate_data.insert_pos_data")
+    log_metadata(cursor, "posverkauf", "generate_data.insert_pos_data")
     conn.commit()
     conn.close()
 
@@ -250,6 +274,8 @@ def insert_transportauftraege():
 
    
 
+    log_metadata(cursor, "transportdienstleister", "generate_data.insert_transportauftraege")
+    log_metadata(cursor, "transportauftrag", "generate_data.insert_transportauftraege")
     conn.commit()
     conn.close()
 

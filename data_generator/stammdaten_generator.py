@@ -1,16 +1,27 @@
 import psycopg2
 import random
 from datetime import datetime
+import os
+
+def log_metadata(conn, table_name, source):
+    cur = conn.cursor()
+    cur.execute(
+        "INSERT INTO metadata (table_name, created_at, source) VALUES (%s, %s, %s)",
+        (table_name, datetime.now(), source),
+    )
+    conn.commit()
+    cur.close()
 
 # Verbindung zur PostgreSQL-Datenbank
 def get_db_connection():
     return psycopg2.connect(
-        host="localhost",
-        port="5432",
-        database="supplychain",
-        user="postgres",
-        password="password"
+        host=os.getenv("POSTGRES_HOST", "localhost"),
+        port=os.getenv("POSTGRES_PORT", "5432"),
+        database=os.getenv("POSTGRES_DB", "supplychain"),
+        user=os.getenv("POSTGRES_USER", "postgres"),
+        password=os.getenv("POSTGRES_PASSWORD", "password"),
     )
+
 
 # Beispieldaten für Partnerunternehmen
 partner_typen = ["Lieferant", "Kunde", "Logistikpartner", "Hersteller", "Händler"]
@@ -27,26 +38,7 @@ dienstleister_namen = [
     "Reliable Shipping GmbH", "Global Express AG", "Premium Logistics Ltd", "Swift Delivery Co"
 ]
 
-# Beispieldaten für Produkte
-produkt_kategorien = ["Bananen", "Tropische Früchte", "Bio-Produkte", "Premium-Früchte"]
-produkt_namen = [
-    "Bio-Bananen", "Premium-Bananen", "Tropische Mischung", "Bio-Tropenfrüchte",
-    "Premium-Mix", "Bio-Exoten", "Tropische Spezialitäten", "Premium-Exoten"
-]
-
-# Adressen generieren
-adressen = [
-    "Musterstraße 1, 12345 Musterstadt",
-    "Beispielweg 15, 54321 Beispielort",
-    "Testallee 42, 98765 Teststadt",
-    "Datenstraße 7, 11111 Datenstadt",
-    "Logistikweg 23, 22222 Logistikort",
-    "Fruchtgasse 12, 33333 Fruchtstadt"
-]
-
-# Partnerunternehmen generieren
 def generate_partnerunternehmen(conn, anzahl=10, fehlerquote=0.2):
-    cur = conn.cursor()
     for i in range(anzahl):
         name = random.choice(partner_namen) + f" {i+1}"
         typ = random.choice(partner_typen)
@@ -72,6 +64,7 @@ def generate_partnerunternehmen(conn, anzahl=10, fehlerquote=0.2):
             VALUES (%s, %s, %s, %s)
         """, (name, typ, adresse, ansprechpartner))
     conn.commit()
+    log_metadata(conn, "partnerunternehmen", "stammdaten_generator.generate_partnerunternehmen")
     cur.close()
     print(f"{anzahl} Partnerunternehmen (inkl. fehlerhafte) erstellt")
 
@@ -91,6 +84,7 @@ def generate_transportdienstleister(conn, anzahl=5):
         """, (name, typ, adresse, ansprechpartner))
     
     conn.commit()
+    log_metadata(conn, "transportdienstleister", "stammdaten_generator.generate_transportdienstleister")
     cur.close()
     print(f"{anzahl} Transportdienstleister erstellt")
 
@@ -108,6 +102,7 @@ def generate_produkte(conn, anzahl=8):
         """, (name, kategorie))
     
     conn.commit()
+    log_metadata(conn, "produkt", "stammdaten_generator.generate_produkte")
     cur.close()
     print(f"{anzahl} Produkte erstellt")
 
@@ -125,6 +120,7 @@ def generate_plantagen(conn, anzahl=5):
             VALUES (%s, %s, %s)
         """, (partnerId, name, standort))
     conn.commit()
+    log_metadata(conn, "plantage", "stammdaten_generator.generate_plantagen")
     cur.close()
     print(f"{anzahl} Plantagen erstellt")
 
@@ -141,6 +137,7 @@ def generate_qcstellen(conn, anzahl=3):
             VALUES (%s, %s, %s)
         """, (partnerId, name, standort))
     conn.commit()
+    log_metadata(conn, "qcstelle", "stammdaten_generator.generate_qcstellen")
     cur.close()
     print(f"{anzahl} QC-Stellen erstellt")
 
@@ -157,6 +154,7 @@ def generate_hafenlager(conn, anzahl=2):
             VALUES (%s, %s, %s)
         """, (partnerId, name, standort))
     conn.commit()
+    log_metadata(conn, "hafenlager", "stammdaten_generator.generate_hafenlager")
     cur.close()
     print(f"{anzahl} Hafenlager erstellt")
 

@@ -196,8 +196,25 @@ def create_tables():
         FOREIGN KEY (dienstleisterId) REFERENCES transportdienstleister(dienstleisterId)
     )
     """)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS metadata (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        table_name TEXT,
+        created_at TIMESTAMP,
+        source TEXT
+    )
+    """)
 
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS bestellschein (
+        bestellscheinId INTEGER PRIMARY KEY AUTOINCREMENT,
+        partnerId INTEGER,
+        bestellscheinDatum DATE,
+        FOREIGN KEY (partnerId) REFERENCES partnerunternehmen(partnerId)
+    )
+    """)
 
+    
     conn.commit()
     conn.close()
 
