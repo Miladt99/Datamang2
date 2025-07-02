@@ -1,10 +1,10 @@
-import sqlite3
+import psycopg2
 import pandas as pd
 
 
 def load_inventory_levels(db_path: str) -> pd.DataFrame:
     """Load current inventory levels from the SQLite database."""
-    conn = sqlite3.connect(db_path)
+    conn = psycopg2.connect("dma_bananen.db")
     df = pd.read_sql_query(
         "SELECT posbestandId, mengekg FROM posbestand", conn
     )

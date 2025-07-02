@@ -1,4 +1,4 @@
-import sqlite3
+import psycopg2
 
 
 def test_postgres_connection(postgres_conn):

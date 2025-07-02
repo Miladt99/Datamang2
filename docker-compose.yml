@@ -1,25 +1,26 @@
 version: '3.8'
-   services:
-     mongo:
-       image: mongo:7
-       container_name: mongodb
-       ports:
-         - "27017:27017"
-       volumes:
-         - ../mongodb:/data/db
-     
-     postgres:
-       image: postgres:16
-       container_name: postgresql
-       ports:
-         - "5433:5433"
-       environment:
-         POSTGRES_USER: postgres
-         POSTGRES_PASSWORD: password
-         POSTGRES_DB: supplychain
-       volumes:
-         - ../sql:/docker-entrypoint-initdb.d
-         - postgres_data:/var/lib/postgresql/data
-   
-   volumes:
-     postgres_data:
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongodb:/data/db
+
+  postgres:
+    image: postgres:16
+    container_name: postgresql
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: supplychain
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

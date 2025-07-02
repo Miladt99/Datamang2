@@ -52,7 +52,8 @@ class Diagramme:
             x="Zeitstempel", y="Ausschuss",
             title="Ausschuss über Zeit", markers=True
         )
-        def forecast_vs_actual(self):
+
+    def forecast_vs_actual(self):
         df_sorted = self.df.sort_values("Zeitstempel").copy()
         df_sorted["Forecast"] = (
             df_sorted["Stückzahl"].rolling(window=3, min_periods=1).mean().shift(1)
@@ -66,7 +67,6 @@ class Diagramme:
         )
         fig.update_layout(yaxis_title="Stückzahl")
         return fig
-    
 
 class ProduktionsDashboard:
     def __init__(self, dateiname):

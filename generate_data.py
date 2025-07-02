@@ -1,4 +1,4 @@
-import sqlite3
+import psycopg2
 from pymongo import MongoClient
 import random
 from datetime import datetime, timedelta
@@ -11,7 +11,13 @@ def log_metadata(cursor, table_name, source):
     )
 
 def insert_data():
-    conn = sqlite3.connect("dma_bananen.db")
+    conn = psycopg2.connect(
+    host="localhost",
+    port=5433,  # laut deiner docker-compose.yml
+    user="postgres",
+    password="password",
+    dbname="supplychain"
+)
     cursor = conn.cursor()
 
     # Partnerunternehmen
@@ -45,7 +51,7 @@ def insert_data():
 
 
 def insert_qc_data():
-    conn = sqlite3.connect("dma_bananen.db")
+    conn = psycopg2.connect("dma_bananen.db")
     cursor = conn.cursor()
 
     # QC-Stelle anlegen
@@ -79,7 +85,7 @@ def insert_qc_data():
 
 
 def insert_hafen_data():
-    conn = sqlite3.connect("dma_bananen.db")
+    conn = psycopg2.connect("dma_bananen.db")
     cursor = conn.cursor()
 
     # Dummy-Hafenlager anlegen (nur einmal)
@@ -127,7 +133,7 @@ def insert_hafen_data():
 
 
 def insert_dc_data():
-    conn = sqlite3.connect("dma_bananen.db")
+    conn = psycopg2.connect("dma_bananen.db")
     cursor = conn.cursor()
 
     # Distributionszentrum anlegen
@@ -166,7 +172,7 @@ def insert_dc_data():
 
 
 def insert_pos_data():
-    conn = sqlite3.connect("dma_bananen.db")
+    conn = psycopg2.connect("dma_bananen.db")
     cursor = conn.cursor()
 
     # POS-Standort anlegen
@@ -227,7 +233,7 @@ def insert_pos_data():
 
 
 def insert_transportauftraege():
-    conn = sqlite3.connect("dma_bananen.db")
+    conn = psycopg2.connect("dma_bananen.db")
     cursor = conn.cursor()
 
     # Dienstleister prüfen oder erstellen

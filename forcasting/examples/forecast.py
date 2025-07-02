@@ -1,16 +1,14 @@
-import sqlite3
+import psycopg2
 import pandas as pd
 from statsmodels.tsa.arima.model import ARIMA
 
 
 def load_sales_series(db_path: str, posbestand_id: int) -> pd.Series:
     """Return daily sales series for a POS inventory item."""
-    conn = sqlite3.connect(db_path)
-    query = (
-        "SELECT verkaufsdatum, verkauftemengekg "
-        "FROM posverkauf WHERE posbestandId = ? ORDER BY verkaufsdatum"
-    )
-    df = pd.read_sql_query(query, conn, params=(posbestand_id,), parse_dates=["verkaufsdatum"])
+    conn = psycopg2.connect("dma_bananen.db")
+    query = "SELECT verkaufsdatum, verkauftemengekg " \
+            "FROM posverkauf WHERE posbestandId = %s ORDER BY verkaufsdatum"
+    df = pd.read_sql_query(query, conn, params=[posbestand_id], parse_dates=["verkaufsdatum"])
     conn.close()
     if df.empty:
         return pd.Series(dtype=float)
@@ -32,7 +30,7 @@ def forecast_inventory(db_path: str, posbestand_id: int, periods: int = 7) -> pd
     fitted = model.fit()
     forecast_sales = fitted.forecast(steps=periods)
 
-    conn = sqlite3.connect(db_path)
+    conn = psycopg2.connect("dma_bananen.db")
     cur = conn.execute(
         "SELECT mengekg FROM posbestand WHERE posbestandId = ?", (posbestand_id,)
     )

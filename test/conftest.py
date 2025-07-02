@@ -1,5 +1,5 @@
 import os
-import sqlite3
+import psycopg2
 import sys
 import tempfile
 from pathlib import Path
@@ -23,13 +23,13 @@ def temp_db(monkeypatch):
     db_path = tmp.name
     tmp.close()
 
-    original_connect = sqlite3.connect
+    original_connect = psycopg2.connect
 
     def connect_override(*args, **kwargs):
         return original_connect(db_path)
 
-    monkeypatch.setattr(create_schema.sqlite3, 'connect', connect_override)
-    monkeypatch.setattr(generate_data.sqlite3, 'connect', connect_override)
+    monkeypatch.setattr(create_schema.psycopg2, 'connect', connect_override)
+    monkeypatch.setattr(generate_data.psycopg2, 'connect', connect_override)
 
     create_schema.create_tables()
     yield db_path

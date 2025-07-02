@@ -1,7 +1,13 @@
-import sqlite3
+import psycopg2
 
 def create_tables():
-    conn = sqlite3.connect("dma_bananen.db")
+    conn = psycopg2.connect(
+        host="localhost",
+        port=5433,  # Das ist richtig!
+        user="postgres",
+        password="password",
+        dbname="supplychain"
+)
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -214,7 +220,7 @@ def create_tables():
     )
     """)
 
-    
+
     conn.commit()
     conn.close()
 
