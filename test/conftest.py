@@ -1,9 +1,14 @@
-import sqlite3
-import tempfile
 import os
+import sqlite3
 import sys
+import tempfile
 from pathlib import Path
+
 import pytest
+from pymongo import MongoClient
+from psycopg2 import connect
+from testcontainers.mongodb import MongoDbContainer
+from testcontainers.postgres import PostgresContainer
 
 # ensure repository root is on sys.path
 ROOT = Path(__file__).resolve().parents[1]
@@ -29,3 +34,33 @@ def temp_db(monkeypatch):
     create_schema.create_tables()
     yield db_path
     os.unlink(db_path)
+
+
+@pytest.fixture(scope="session")
+def postgres_container():
+    """Spin up a temporary PostgreSQL container for tests."""
+    with PostgresContainer("postgres:16") as postgres:
+        postgres.start()
+        yield postgres
+
+
+@pytest.fixture()
+def postgres_conn(postgres_container):
+    conn = connect(postgres_container.get_connection_url())
+    yield conn
+    conn.close()
+
+
+@pytest.fixture(scope="session")
+def mongo_container():
+    """Spin up a temporary MongoDB container for tests."""
+    with MongoDbContainer("mongo:7") as mongo:
+        mongo.start()
+        yield mongo
+
+
+@pytest.fixture()
+def mongo_client(mongo_container):
+    client = MongoClient(mongo_container.get_connection_url())
+    yield client
+    client.close()

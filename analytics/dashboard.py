@@ -52,6 +52,21 @@ class Diagramme:
             x="Zeitstempel", y="Ausschuss",
             title="Ausschuss über Zeit", markers=True
         )
+        def forecast_vs_actual(self):
+        df_sorted = self.df.sort_values("Zeitstempel").copy()
+        df_sorted["Forecast"] = (
+            df_sorted["Stückzahl"].rolling(window=3, min_periods=1).mean().shift(1)
+        )
+        fig = px.line(
+            df_sorted,
+            x="Zeitstempel",
+            y=["Stückzahl", "Forecast"],
+            title="Forecasted Demand vs. Actual Sales",
+            markers=True,
+        )
+        fig.update_layout(yaxis_title="Stückzahl")
+        return fig
+    
 
 class ProduktionsDashboard:
     def __init__(self, dateiname):
@@ -93,7 +108,8 @@ class ProduktionsDashboard:
                 dcc.Graph(figure=self.charts.stueckzahl_pro_maschine()),
                 dcc.Graph(figure=self.charts.produktverteilung()),
                 dcc.Graph(figure=self.charts.stueckzahl_ueber_zeit()),
-                dcc.Graph(figure=self.charts.ausschuss_ueber_zeit())
+                dcc.Graph(figure=self.charts.ausschuss_ueber_zeit()),
+                dcc.Graph(figure=self.charts.forecast_vs_actual())
             ])
         ])
 
